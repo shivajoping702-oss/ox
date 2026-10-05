@@ -1,0 +1,124 @@
+﻿<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OX - Boss Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    input, select {
+      padding: 10px;
+      margin: 8px 0;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.3);
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+      width: 90%;
+    }
+  </style>
+</head>
+<body>
+
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <h1>👑 OX - Boss Master Dashboard</h1>
+    <div>
+      <button class="btn-glass" onclick="setLanguage('hi')">🇮🇳 हिंदी</button>
+      <button class="btn-glass" onclick="setLanguage('en')">🇬🇧 English</button>
+    </div>
+  </div>
+
+  <!-- 1. Add New Worker Form -->
+  <div class="ox-glass-card">
+    <h3 id="lbl-add-worker">+ Add New Worker / नया वर्कर जोड़ें</h3>
+    <input type="text" id="txt-name" placeholder="Worker Name / वर्कर का नाम">
+    <input type="text" id="txt-phone" placeholder="Mobile Number / मोबाइल नंबर">
+    <br>
+    <button class="btn-glass" onclick="addWorker()">➕ Add Worker</button>
+  </div>
+
+  <!-- 2. Send Fund Form -->
+  <div class="ox-glass-card">
+    <h3 id="lbl-send-fund">💸 Send Fund / वर्कर को पैसे भेजें</h3>
+    <select id="ddl-workers">
+      <option value="1">Ramesh</option>
+      <option value="2">Suresh</option>
+    </select>
+    <input type="number" id="txt-amount" placeholder="Amount / रुपये (e.g. 1000)">
+    <br>
+    <button class="btn-glass" onclick="sendFund()">🚀 Transfer Cash</button>
+  </div>
+
+  <!-- 3. Workers Live Wallet Balance List -->
+  <div class="ox-glass-card">
+    <h3 id="lbl-live-wallets">👥 Live Workers Cash-in-Hand</h3>
+    <button class="btn-glass" onclick="loadWorkers()" style="margin-bottom: 15px;">🔄 Refresh List</button>
+    <div id="workers-list">
+      <!-- Worker cards will load here -->
+    </div>
+  </div>
+
+  <script>
+    const API_URL = "http://localhost:3000/api/boss";
+
+    // Load Workers from Server
+    async function loadWorkers() {
+      const res = await fetch(`${API_URL}/workers`);
+      const data = await res.json();
+      
+      let html = "";
+      let options = "";
+      
+      data.workers.forEach(w => {
+        html += `
+          <div style="border-bottom: 1px solid rgba(255,255,255,0.1); padding: 10px 0;">
+            <strong>👤 ${w.name}</strong> (${w.phone})<br>
+            Cash in Hand: <span class="cash-emerald">₹ ${w.cash_in_hand}</span>
+          </div>
+        `;
+        options += `<option value="${w.id}">${w.name}</option>`;
+      });
+
+      document.getElementById('workers-list').innerHTML = html;
+      document.getElementById('ddl-workers').innerHTML = options;
+    }
+
+    // Add Worker Function
+    async function addWorker() {
+      const name = document.getElementById('txt-name').value;
+      const phone = document.getElementById('txt-phone').value;
+      if (!name || !phone) return alert("Please fill all details!");
+
+      await fetch(`${API_URL}/add-worker`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, phone, language: "hi" })
+      });
+
+      alert("Worker Added Successfully!");
+      document.getElementById('txt-name').value = "";
+      document.getElementById('txt-phone').value = "";
+      loadWorkers();
+    }
+
+    // Send Fund Function
+    async function sendFund() {
+      const worker_id = document.getElementById('ddl-workers').value;
+      const amount = document.getElementById('txt-amount').value;
+      if (!amount) return alert("Please enter amount!");
+
+      await fetch(`${API_URL}/send-fund`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ worker_id, amount })
+      });
+
+      alert("Fund Transferred Successfully!");
+      document.getElementById('txt-amount').value = "";
+      loadWorkers();
+    }
+
+    // Initial Load
+    loadWorkers();
+  </script>
+</body>
+</html>

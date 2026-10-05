@@ -1,0 +1,42 @@
+﻿/* OX App Glassmorphism Frosted Glass OS Theme */
+body {
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #ffffff;
+  min-height: 100vh;
+  margin: 0;
+  padding: 20px;
+}
+
+.ox-glass-card {
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.cash-emerald {
+  color: #00E676;
+  font-size: 1.8rem;
+  font-weight: bold;
+  text-shadow: 0 0 10px rgba(0, 230, 118, 0.4);
+}
+
+.btn-glass {
+  background: rgba(0, 230, 118, 0.2);
+  border: 1px solid #00E676;
+  color: #ffffff;
+  padding: 12px 24px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: bold;
+  backdrop-filter: blur(10px);
+}
+
+.btn-glass:hover {
+  background: rgba(0, 230, 118, 0.4);
+}
