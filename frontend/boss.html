@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="hi">
 <head>
   <meta charset="UTF-8">
@@ -20,45 +20,45 @@
 <body>
 
   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-    <h1>👑 OX - Boss Master Dashboard</h1>
+    <h1>?? OX - Boss Master Dashboard</h1>
     <div>
-      <button class="btn-glass" onclick="setLanguage('hi')">🇮🇳 हिंदी</button>
-      <button class="btn-glass" onclick="setLanguage('en')">🇬🇧 English</button>
+      <button class="btn-glass" onclick="setLanguage('hi')">???? ?????</button>
+      <button class="btn-glass" onclick="setLanguage('en')">???? English</button>
     </div>
   </div>
 
   <!-- 1. Add New Worker Form -->
   <div class="ox-glass-card">
-    <h3 id="lbl-add-worker">+ Add New Worker / नया वर्कर जोड़ें</h3>
-    <input type="text" id="txt-name" placeholder="Worker Name / वर्कर का नाम">
-    <input type="text" id="txt-phone" placeholder="Mobile Number / मोबाइल नंबर">
+    <h3 id="lbl-add-worker">+ Add New Worker / ??? ????? ??????</h3>
+    <input type="text" id="txt-name" placeholder="Worker Name / ????? ?? ???">
+    <input type="text" id="txt-phone" placeholder="Mobile Number / ?????? ????">
     <br>
-    <button class="btn-glass" onclick="addWorker()">➕ Add Worker</button>
+    <button class="btn-glass" onclick="addWorker()">? Add Worker</button>
   </div>
 
   <!-- 2. Send Fund Form -->
   <div class="ox-glass-card">
-    <h3 id="lbl-send-fund">💸 Send Fund / वर्कर को पैसे भेजें</h3>
+    <h3 id="lbl-send-fund">?? Send Fund / ????? ?? ???? ?????</h3>
     <select id="ddl-workers">
       <option value="1">Ramesh</option>
       <option value="2">Suresh</option>
     </select>
-    <input type="number" id="txt-amount" placeholder="Amount / रुपये (e.g. 1000)">
+    <input type="number" id="txt-amount" placeholder="Amount / ????? (e.g. 1000)">
     <br>
-    <button class="btn-glass" onclick="sendFund()">🚀 Transfer Cash</button>
+    <button class="btn-glass" onclick="sendFund()">?? Transfer Cash</button>
   </div>
 
   <!-- 3. Workers Live Wallet Balance List -->
   <div class="ox-glass-card">
-    <h3 id="lbl-live-wallets">👥 Live Workers Cash-in-Hand</h3>
-    <button class="btn-glass" onclick="loadWorkers()" style="margin-bottom: 15px;">🔄 Refresh List</button>
+    <h3 id="lbl-live-wallets">?? Live Workers Cash-in-Hand</h3>
+    <button class="btn-glass" onclick="loadWorkers()" style="margin-bottom: 15px;">?? Refresh List</button>
     <div id="workers-list">
       <!-- Worker cards will load here -->
     </div>
   </div>
 
   <script>
-    const API_URL = "http://localhost:3000/api/boss";
+    const API_URL = "https://ox-pzdd.onrender.com/api/boss";
 
     // Load Workers from Server
     async function loadWorkers() {
@@ -71,8 +71,8 @@
       data.workers.forEach(w => {
         html += `
           <div style="border-bottom: 1px solid rgba(255,255,255,0.1); padding: 10px 0;">
-            <strong>👤 ${w.name}</strong> (${w.phone})<br>
-            Cash in Hand: <span class="cash-emerald">₹ ${w.cash_in_hand}</span>
+            <strong>?? ${w.name}</strong> (${w.phone})<br>
+            Cash in Hand: <span class="cash-emerald">? ${w.cash_in_hand}</span>
           </div>
         `;
         options += `<option value="${w.id}">${w.name}</option>`;

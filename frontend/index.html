@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="hi">
 <head>
   <meta charset="UTF-8">
@@ -27,34 +27,34 @@
 <body>
 
   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-    <h1>✨ OX App</h1>
+    <h1>? OX App</h1>
     <div>
-      <button class="btn-glass" onclick="setLanguage('hi')">🇮🇳 हिंदी</button>
-      <button class="btn-glass" onclick="setLanguage('en')">🇬🇧 English</button>
+      <button class="btn-glass" onclick="setLanguage('hi')">???? ?????</button>
+      <button class="btn-glass" onclick="setLanguage('en')">???? English</button>
     </div>
   </div>
 
   <!-- Wallet Balance -->
   <div class="ox-glass-card">
-    <h3 id="lbl-worker-name">Worker: Ramesh 👤</h3>
-    <p id="lbl-balance-title" style="margin-bottom: 5px;">Current Cash-in-Hand / पास में बचा कैश:</p>
-    <div class="cash-emerald" id="lbl-cash">₹ 200.00</div>
+    <h3 id="lbl-worker-name">Worker: Ramesh ??</h3>
+    <p id="lbl-balance-title" style="margin-bottom: 5px;">Current Cash-in-Hand / ??? ??? ??? ???:</p>
+    <div class="cash-emerald" id="lbl-cash">? 200.00</div>
   </div>
 
   <!-- Expense Entry Form with Live Camera & File Upload -->
   <div class="ox-glass-card">
-    <h3 id="lbl-add-expense">+ Add Expense Proof / नया खर्चा जोड़ें</h3>
+    <h3 id="lbl-add-expense">+ Add Expense Proof / ??? ????? ??????</h3>
     
-    <label id="lbl-amount">Amount Spent (रुपये):</label><br>
+    <label id="lbl-amount">Amount Spent (?????):</label><br>
     <input type="number" id="txt-amount" placeholder="e.g. 250"><br>
 
-    <label id="lbl-mode">Payment Mode (पेमेंट का तरीका):</label><br>
+    <label id="lbl-mode">Payment Mode (?????? ?? ?????):</label><br>
     <select id="ddl-mode">
-      <option value="CASH">Cash (नकद)</option>
+      <option value="CASH">Cash (???)</option>
       <option value="UPI">Online / UPI</option>
     </select><br>
 
-    <label id="lbl-proof-type">Proof Upload (सबूत अपलोड करें):</label><br>
+    <label id="lbl-proof-type">Proof Upload (???? ????? ????):</label><br>
     
     <!-- Hidden Camera Input (capture="environment" opens direct phone camera) -->
     <input type="file" id="file-camera" accept="image/*" capture="environment" style="display:none" onchange="previewImage(this, 'LIVE_CAMERA')">
@@ -63,8 +63,8 @@
     <input type="file" id="file-screenshot" accept="image/*" style="display:none" onchange="previewImage(this, 'UPI_SCREENSHOT')">
 
     <div style="margin-top: 10px;">
-      <button class="btn-glass" onclick="document.getElementById('file-camera').click()">📷 Live Camera (कैमरा)</button>
-      <button class="btn-glass" onclick="document.getElementById('file-screenshot').click()">🖼️ Upload Screenshot</button>
+      <button class="btn-glass" onclick="document.getElementById('file-camera').click()">?? Live Camera (?????)</button>
+      <button class="btn-glass" onclick="document.getElementById('file-screenshot').click()">??? Upload Screenshot</button>
     </div>
 
     <!-- Image Preview -->
@@ -72,7 +72,7 @@
     <div id="file-info" style="margin-top: 5px; font-size: 0.9rem; color: #00E676;"></div>
 
     <br>
-    <button class="btn-glass" style="width: 100%; background: rgba(0, 230, 118, 0.4);" onclick="submitExpense()">🚀 Submit Expense / खर्चा भेजें</button>
+    <button class="btn-glass" style="width: 100%; background: rgba(0, 230, 118, 0.4);" onclick="submitExpense()">?? Submit Expense / ????? ?????</button>
   </div>
 
   <script>
@@ -88,7 +88,7 @@
           const img = document.getElementById('preview-img');
           img.src = base64Image;
           img.style.display = 'block';
-          document.getElementById('file-info').innerText = `✅ Proof Selected: ${proofType}`;
+          document.getElementById('file-info').innerText = `? Proof Selected: ${proofType}`;
         };
         reader.readAsDataURL(input.files[0]);
       }
@@ -101,7 +101,7 @@
       if (!amount) return alert("Please enter amount!");
       if (!base64Image) return alert("Please attach photo/screenshot proof!");
 
-      const res = await fetch("http://localhost:3000/api/worker/add-expense", {
+      const res = await fetch("https://ox-pzdd.onrender.com/api/worker/add-expense", {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -115,7 +115,7 @@
 
       const data = await res.json();
       alert("Expense Submitted Successfully!");
-      document.getElementById('lbl-cash').innerText = `₹ ${data.remaining_cash.toFixed(2)}`;
+      document.getElementById('lbl-cash').innerText = `? ${data.remaining_cash.toFixed(2)}`;
       document.getElementById('txt-amount').value = "";
       document.getElementById('preview-img').style.display = 'none';
       document.getElementById('file-info').innerText = "";
@@ -123,15 +123,15 @@
 
     const translations = {
       hi: {
-        balanceTitle: "अभी पास में बचा कैश:",
-        addExpense: "+ नया खर्चा और फोटो जोड़ें",
-        amountLabel: "खर्चे की रकम (₹):",
-        proofType: "सबूत का प्रकार चुनिए:"
+        balanceTitle: "??? ??? ??? ??? ???:",
+        addExpense: "+ ??? ????? ?? ???? ??????",
+        amountLabel: "????? ?? ??? (?):",
+        proofType: "???? ?? ?????? ?????:"
       },
       en: {
         balanceTitle: "Current Cash-in-Hand:",
         addExpense: "+ Add New Expense Proof",
-        amountLabel: "Amount Spent (₹):",
+        amountLabel: "Amount Spent (?):",
         proofType: "Select Proof Type:"
       }
     };
