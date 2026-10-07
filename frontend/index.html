@@ -5,35 +5,41 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>OX - Boss Dashboard</title>
   <style>
-    body { font-family: system-ui, sans-serif; background: #0f172a; color: #fff; padding: 20px; }
-    .card { background: #1e293b; padding: 15px; border-radius: 10px; margin-bottom: 15px; }
-    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-    th, td { border: 1px solid #334155; padding: 8px; text-align: left; }
+    body { font-family: system-ui, sans-serif; background: #0f172a; color: #fff; padding: 20px; margin: 0; }
+    .card { background: #1e293b; padding: 20px; border-radius: 12px; margin-bottom: 20px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+    th, td { border: 1px solid #334155; padding: 12px; text-align: left; }
     th { background: #334155; }
-    img { max-width: 100px; border-radius: 6px; }
+    img { max-width: 120px; border-radius: 8px; cursor: pointer; }
+    .badge { padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 0.85rem; }
+    .cash-badge { background: #16a34a; color: #fff; }
+    .upi-badge { background: #2563eb; color: #fff; }
   </style>
 </head>
 <body>
   <h1>👑 Boss Dashboard</h1>
+  
   <div class="card">
-    <h2>Workers Cash Status</h2>
+    <h2>Workers Live Cash Balance</h2>
     <div id="workers-list">Loading...</div>
   </div>
+
   <div class="card">
-    <h2>Expense Reports & Proofs</h2>
+    <h2>Expense Reports & Proof Images</h2>
     <table>
       <thead>
         <tr>
           <th>Worker</th>
           <th>Amount</th>
           <th>Mode</th>
-          <th>Proof</th>
+          <th>Proof Image</th>
           <th>Time</th>
         </tr>
       </thead>
       <tbody id="expenses-list"></tbody>
     </table>
   </div>
+
   <script>
     async function fetchDashboard() {
       try {
@@ -41,15 +47,15 @@
         const data = await res.json();
         
         document.getElementById('workers-list').innerHTML = data.workers.map(w => 
-          `<p><b>${w.name}:</b> Cash-in-Hand: ₹${w.cash_in_hand.toFixed(2)}</p>`
+          `<p style="font-size: 1.2rem;"><b>${w.name}:</b> Cash-in-Hand: <span style="color:#4ade80;">₹${w.cash_in_hand.toFixed(2)}</span></p>`
         ).join('');
 
         document.getElementById('expenses-list').innerHTML = data.expenses.map(e => `
           <tr>
-            <td>${e.worker_name}</td>
-            <td>₹${e.amount}</td>
-            <td>${e.payment_mode} (${e.proof_type})</td>
-            <td><a href="${e.image_url}" target="_blank"><img src="${e.image_url}" /></a></td>
+            <td><b>${e.worker_name}</b></td>
+            <td><b>₹${e.amount}</b></td>
+            <td><span class="badge ${e.payment_mode === 'CASH' ? 'cash-badge' : 'upi-badge'}">${e.payment_mode}</span> (${e.proof_type})</td>
+            <td><a href="${e.image_url}" target="_blank"><img src="${e.image_url}" alt="Proof" /></a></td>
             <td>${e.timestamp}</td>
           </tr>
         `).join('');

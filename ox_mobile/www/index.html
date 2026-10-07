@@ -4,77 +4,57 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>OX - Worker App</title>
-  <link rel="stylesheet" href="styles.css">
   <style>
-    input, select {
-      padding: 10px;
-      margin: 8px 0;
-      border-radius: 8px;
-      border: 1px solid rgba(255,255,255,0.3);
-      background: rgba(255,255,255,0.1);
-      color: #fff;
-      width: 90%;
-    }
-    #preview-img {
-      max-width: 100%;
-      border-radius: 12px;
-      margin-top: 10px;
-      display: none;
-      border: 1px solid rgba(255,255,255,0.3);
-    }
-    body, select, input, button {
-      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif !important;
-    }
+    body { font-family: system-ui, -apple-system, sans-serif; background: #0a0f1d; color: #ffffff; padding: 16px; margin: 0; }
+    .card { background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(10px); border-radius: 16px; padding: 20px; margin-bottom: 20px; border: 1px solid rgba(255, 255, 255, 0.15); }
+    h1, h2, h3 { margin-top: 0; }
+    .cash-text { font-size: 2rem; font-weight: bold; color: #00e676; margin-top: 10px; }
+    input, select, button { width: 100%; padding: 12px; margin-top: 10px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.1); color: #fff; box-sizing: border-box; font-size: 1rem; }
+    button { background: #00e676; color: #000; font-weight: bold; border: none; cursor: pointer; margin-top: 15px; }
+    .btn-secondary { background: rgba(255,255,255,0.2); color: #fff; }
+    #preview-img { max-width: 100%; border-radius: 10px; margin-top: 12px; display: none; border: 1px solid rgba(255,255,255,0.3); }
+    .lang-btn { width: auto; display: inline-block; padding: 6px 12px; font-size: 0.85rem; margin-left: 5px; }
   </style>
 </head>
 <body>
-  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
     <h1>📱 OX App</h1>
     <div>
-      <button class="btn-glass" onclick="setLanguage('hi')">🇮🇳 हिंदी</button>
-      <button class="btn-glass" onclick="setLanguage('en')">🇬🇧 English</button>
+      <button class="lang-btn" onclick="setLang('hi')">🇮🇳 हिंदी</button>
+      <button class="lang-btn" onclick="setLang('en')">🇬🇧 EN</button>
     </div>
   </div>
 
-  <!-- Wallet Balance -->
-  <div class="ox-glass-card">
-    <h3 id="lbl-worker-name">Worker: Ramesh</h3>
-    <p id="lbl-balance-title" style="margin-bottom: 5px;">Current Cash-in-Hand / कुल नकद पास में:</p>
-    <div class="cash-emerald" id="lbl-cash">₹ 200.00</div>
+  <div class="card">
+    <h3 id="lbl-worker">Worker: Ramesh</h3>
+    <p id="lbl-balance-title">Current Cash-in-Hand / कुल नकद:</p>
+    <div class="cash-text" id="lbl-cash">₹ 200.00</div>
   </div>
 
-  <!-- Expense Entry Form with Live Camera & File Upload -->
-  <div class="ox-glass-card">
-    <h3 id="lbl-add-expense">+ Add Expense Proof / नया खर्चा जोड़ें</h3>
-        
-    <label id="lbl-amount">Amount Spent (खर्चा राशि):</label><br>
-    <input type="number" id="txt-amount" placeholder="e.g. 250"><br>
+  <div class="card">
+    <h3 id="lbl-add-expense">+ Add Expense Proof / खर्चा जोड़ें</h3>
+    
+    <label id="lbl-amount">Amount Spent (खर्चा राशि ₹):</label>
+    <input type="number" id="txt-amount" placeholder="e.g. 250">
 
-    <label id="lbl-mode">Payment Mode (भुगतान का प्रकार):</label><br>
+    <label style="display:block; margin-top:15px;" id="lbl-mode">Payment Mode (भुगतान का प्रकार):</label>
     <select id="ddl-mode">
       <option value="CASH">Cash (नकद)</option>
       <option value="UPI">Online / UPI</option>
-    </select><br>
+    </select>
 
-    <label id="lbl-proof-type">Proof Upload (प्रमाण अपलोड करें):</label><br>
-        
-    <!-- Hidden Camera Input -->
+    <label style="display:block; margin-top:15px;" id="lbl-proof">Proof Upload (प्रमाण फोटो):</label>
+    
     <input type="file" id="file-camera" accept="image/*" capture="environment" style="display:none" onchange="previewImage(this, 'LIVE_CAMERA')">
-        
-    <!-- Hidden Screenshot Input -->
     <input type="file" id="file-screenshot" accept="image/*" style="display:none" onchange="previewImage(this, 'UPI_SCREENSHOT')">
 
-    <div style="margin-top: 10px;">
-      <button class="btn-glass" onclick="document.getElementById('file-camera').click()">📷 Live Camera (कैमरा)</button>
-      <button class="btn-glass" onclick="document.getElementById('file-screenshot').click()">🖼️ Upload Screenshot</button>
-    </div>
+    <button type="button" class="btn-secondary" onclick="document.getElementById('file-camera').click()">📷 Live Camera (कैमरा)</button>
+    <button type="button" class="btn-secondary" onclick="document.getElementById('file-screenshot').click()">🖼️ Upload Screenshot</button>
 
-    <!-- Image Preview -->
     <img id="preview-img" alt="Proof Preview">
-    <div id="file-info" style="margin-top: 5px; font-size: 0.9rem; color: #00E676;"></div>
+    <div id="file-info" style="margin-top: 8px; font-size: 0.9rem; color: #00E676;"></div>
 
-    <br>
-    <button class="btn-glass" style="width: 100%; background: rgba(0, 230, 118, 0.4);" onclick="submitExpense()">✅ Submit Expense / खर्चा जमा करें</button>
+    <button type="button" style="background: #00E676;" onclick="submitExpense()">✅ Submit Expense / खर्चा जमा करें</button>
   </div>
 
   <script>
@@ -90,7 +70,7 @@
           const img = document.getElementById('preview-img');
           img.src = base64Image;
           img.style.display = 'block';
-          document.getElementById('file-info').innerText = `✔ Proof Selected: ${proofType}`;
+          document.getElementById('file-info').innerText = `✔ Proof Selected (${proofType})`;
         };
         reader.readAsDataURL(input.files[0]);
       }
@@ -101,48 +81,44 @@
       const payment_mode = document.getElementById('ddl-mode').value;
 
       if (!amount) return alert("Please enter amount!");
-      if (!base64Image) return alert("Please attach photo/screenshot proof!");
+      if (!base64Image) return alert("Please attach photo proof!");
 
-      const res = await fetch("https://ox-pzdd.onrender.com/api/worker/add-expense", {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          worker_id: 1, // Ramesh
-          amount,
-          payment_mode,
-          proof_type: selectedProofType,
-          image_url: base64Image
-        })
-      });
+      try {
+        const res = await fetch("https://ox-pzdd.onrender.com/api/worker/add-expense", {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            worker_id: 1,
+            amount,
+            payment_mode,
+            proof_type: selectedProofType,
+            image_url: base64Image
+          })
+        });
 
-      const data = await res.json();
-      alert("Expense Submitted Successfully!");
-      document.getElementById('lbl-cash').innerText = `₹ ${data.remaining_cash.toFixed(2)}`;
-      document.getElementById('txt-amount').value = "";
-      document.getElementById('preview-img').style.display = 'none';
-      document.getElementById('file-info').innerText = "";
+        const data = await res.json();
+        alert("Expense Submitted Successfully!");
+        document.getElementById('lbl-cash').innerText = `₹ ${data.remaining_cash.toFixed(2)}`;
+        document.getElementById('txt-amount').value = "";
+        document.getElementById('preview-img').style.display = 'none';
+        document.getElementById('file-info').innerText = "";
+        base64Image = "";
+      } catch(err) {
+        alert("Error submitting expense. Please check internet!");
+      }
     }
 
     const translations = {
-      hi: {
-        balanceTitle: "कुल नकद पास में:",
-        addExpense: "+ नया खर्चा प्रमाण जोड़ें",
-        amountLabel: "खर्चा राशि (₹):",
-        proofType: "प्रमाण का प्रकार चुनें:"
-      },
-      en: {
-        balanceTitle: "Current Cash-in-Hand:",
-        addExpense: "+ Add New Expense Proof",
-        amountLabel: "Amount Spent (₹):",
-        proofType: "Select Proof Type:"
-      }
+      hi: { balanceTitle: "कुल नकद पास में:", addExpense: "+ नया खर्चा प्रमाण जोड़ें", amountLabel: "खर्चा राशि (₹):", modeLabel: "भुगतान का प्रकार:", proofLabel: "प्रमाण फोटो:" },
+      en: { balanceTitle: "Current Cash-in-Hand:", addExpense: "+ Add New Expense Proof", amountLabel: "Amount Spent (₹):", modeLabel: "Payment Mode:", proofLabel: "Proof Upload:" }
     };
 
-    function setLanguage(lang) {
+    function setLang(lang) {
       document.getElementById('lbl-balance-title').innerText = translations[lang].balanceTitle;
       document.getElementById('lbl-add-expense').innerText = translations[lang].addExpense;
       document.getElementById('lbl-amount').innerText = translations[lang].amountLabel;
-      document.getElementById('lbl-proof-type').innerText = translations[lang].proofType;
+      document.getElementById('lbl-mode').innerText = translations[lang].modeLabel;
+      document.getElementById('lbl-proof').innerText = translations[lang].proofLabel;
     }
   </script>
 </body>
