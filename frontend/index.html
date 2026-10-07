@@ -17,13 +17,11 @@
   </style>
 </head>
 <body>
-  <h1>👑 Boss Dashboard</h1>
-  
+  <h1>👑 Boss Dashboard (Supabase Live Database)</h1>
   <div class="card">
     <h2>Workers Live Cash Balance</h2>
     <div id="workers-list">Loading...</div>
   </div>
-
   <div class="card">
     <h2>Expense Reports & Proof Images</h2>
     <table>
@@ -39,26 +37,24 @@
       <tbody id="expenses-list"></tbody>
     </table>
   </div>
-
   <script>
     async function fetchDashboard() {
       try {
         const res = await fetch("https://ox-pzdd.onrender.com/api/boss/dashboard");
         const data = await res.json();
-        
-        document.getElementById('workers-list').innerHTML = data.workers.map(w => 
-          `<p style="font-size: 1.2rem;"><b>${w.name}:</b> Cash-in-Hand: <span style="color:#4ade80;">₹${w.cash_in_hand.toFixed(2)}</span></p>`
-        ).join('');
+        document.getElementById('workers-list').innerHTML = data.workers.length ? data.workers.map(w => 
+          `<p style="font-size: 1.2rem;"><b>${w.name} (${w.phone}):</b> Cash-in-Hand: <span style="color:#4ade80;">₹${parseFloat(w.cash_in_hand).toFixed(2)}</span></p>`
+        ).join('') : '<p>No workers found.</p>';
 
-        document.getElementById('expenses-list').innerHTML = data.expenses.map(e => `
+        document.getElementById('expenses-list').innerHTML = data.expenses.length ? data.expenses.map(e => `
           <tr>
             <td><b>${e.worker_name}</b></td>
             <td><b>₹${e.amount}</b></td>
             <td><span class="badge ${e.payment_mode === 'CASH' ? 'cash-badge' : 'upi-badge'}">${e.payment_mode}</span> (${e.proof_type})</td>
             <td><a href="${e.image_url}" target="_blank"><img src="${e.image_url}" alt="Proof" /></a></td>
-            <td>${e.timestamp}</td>
+            <td>${new Date(e.created_at || e.timestamp).toLocaleString("en-IN")}</td>
           </tr>
-        `).join('');
+        `).join('') : '<tr><td colspan="5">No expense entries yet.</td></tr>';
       } catch(err) {
         console.error(err);
       }
