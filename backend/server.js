@@ -1,72 +1,58 @@
 ﻿const express = require('express');
+const cors = require('cors');
 const app = express();
-app.use(express.json());
 
-// In-Memory Database for OX App
-let workers = [
-  { id: 1, name: "Ramesh", phone: "9876543210", language: "hi", cash_in_hand: 200.00 },
-  { id: 2, name: "Suresh", phone: "9876543211", language: "en", cash_in_hand: 50.00 }
-];
+app.use(cors());
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
+
+let workers = {
+  1: { id: 1, name: "Ramesh", cash_in_hand: 200.00 }
+};
 
 let expenses = [];
 
-// 1. Get All Workers & Balances (Boss Dashboard)
-app.get('/api/boss/workers', (req, res) => {
-  res.json({ status: "success", workers: workers });
+app.get('/api/boss/dashboard', (req, res) => {
+  res.json({
+    workers: Object.values(workers),
+    expenses: expenses
+  });
 });
 
-// 2. Add New Worker (Unlimited Workers)
-app.post('/api/boss/add-worker', (req, res) => {
-  const { name, phone, language } = req.body;
-  const newWorker = {
-    id: workers.length + 1,
-    name,
-    phone,
-    language: language || "hi",
-    cash_in_hand: 0.00
-  };
-  workers.push(newWorker);
-  res.json({ message: "Worker Added Successfully", worker: newWorker });
-});
-
-// 3. Send Fund to Worker (Boss)
-app.post('/api/boss/send-fund', (req, res) => {
-  const { worker_id, amount } = req.body;
-  let worker = workers.find(w => w.id === parseInt(worker_id));
-  if (worker) {
-    worker.cash_in_hand += parseFloat(amount);
-    res.json({ message: "Fund Transferred", new_balance: worker.cash_in_hand });
-  } else {
-    res.status(404).json({ error: "Worker Not Found" });
-  }
-});
-
-// 4. Add Expense (Worker - Live Camera or UPI Screenshot)
 app.post('/api/worker/add-expense', (req, res) => {
   const { worker_id, amount, payment_mode, proof_type, image_url } = req.body;
-  let worker = workers.find(w => w.id === parseInt(worker_id));
-  
-  if (worker) {
-    const newExpense = {
-      id: expenses.length + 1,
-      worker_id,
-      amount: parseFloat(amount),
-      payment_mode, // CASH or UPI
-      proof_type,   // LIVE_CAMERA or UPI_SCREENSHOT
-      image_url,
-      timestamp: new Date().toISOString(),
-      status: "PENDING"
-    };
-    expenses.push(newExpense);
-    
-    // Auto Deduction from Cash in Hand
-    worker.cash_in_hand -= parseFloat(amount);
-    
-    res.json({ message: "Expense Submitted for Approval", remaining_cash: worker.cash_in_hand });
-  } else {
-    res.status(404).json({ error: "Worker Not Found" });
+  const numericAmount = parseFloat(amount);
+
+  if (!numericAmount || isNaN(numericAmount)) {
+    return res.status(400).json({ error: "Invalid amount" });
   }
+
+  const worker = workers[worker_id] || { id: worker_id, name: "Worker " + worker_id, cash_in_hand: 0 };
+  
+  if (payment_mode === "CASH") {
+    worker.cash_in_hand -= numericAmount;
+  }
+
+  const newExpense = {
+    id: expenses.length + 1,
+    worker_id: worker.id,
+    worker_name: worker.name,
+    amount: numericAmount,
+    payment_mode,
+    proof_type,
+    image_url,
+    timestamp: new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })
+  };
+
+  expenses.unshift(newExpense);
+  workers[worker_id] = worker;
+
+  res.json({
+    message: "Expense saved successfully",
+    remaining_cash: worker.cash_in_hand,
+    expense: newExpense
+  });
 });
 
-const PORT = 3000;
-app.listen(PORT, () => console.log(`OX App Backend running on port ${PORT}`));
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

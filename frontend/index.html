@@ -1,147 +1,64 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="hi">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>OX - Worker App</title>
-  <link rel="stylesheet" href="styles.css">
+  <title>OX - Boss Dashboard</title>
   <style>
-    input, select {
-      padding: 10px;
-      margin: 8px 0;
-      border-radius: 8px;
-      border: 1px solid rgba(255,255,255,0.3);
-      background: rgba(255,255,255,0.1);
-      color: #fff;
-      width: 90%;
-    }
-    #preview-img {
-      max-width: 100%;
-      border-radius: 12px;
-      margin-top: 10px;
-      display: none;
-      border: 1px solid rgba(255,255,255,0.3);
-    }
+    body { font-family: system-ui, sans-serif; background: #0f172a; color: #fff; padding: 20px; }
+    .card { background: #1e293b; padding: 15px; border-radius: 10px; margin-bottom: 15px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { border: 1px solid #334155; padding: 8px; text-align: left; }
+    th { background: #334155; }
+    img { max-width: 100px; border-radius: 6px; }
   </style>
 </head>
 <body>
-
-  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-    <h1>? OX App</h1>
-    <div>
-      <button class="btn-glass" onclick="setLanguage('hi')">???? ?????</button>
-      <button class="btn-glass" onclick="setLanguage('en')">???? English</button>
-    </div>
+  <h1>👑 Boss Dashboard</h1>
+  <div class="card">
+    <h2>Workers Cash Status</h2>
+    <div id="workers-list">Loading...</div>
   </div>
-
-  <!-- Wallet Balance -->
-  <div class="ox-glass-card">
-    <h3 id="lbl-worker-name">Worker: Ramesh ??</h3>
-    <p id="lbl-balance-title" style="margin-bottom: 5px;">Current Cash-in-Hand / ??? ??? ??? ???:</p>
-    <div class="cash-emerald" id="lbl-cash">? 200.00</div>
+  <div class="card">
+    <h2>Expense Reports & Proofs</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Worker</th>
+          <th>Amount</th>
+          <th>Mode</th>
+          <th>Proof</th>
+          <th>Time</th>
+        </tr>
+      </thead>
+      <tbody id="expenses-list"></tbody>
+    </table>
   </div>
-
-  <!-- Expense Entry Form with Live Camera & File Upload -->
-  <div class="ox-glass-card">
-    <h3 id="lbl-add-expense">+ Add Expense Proof / ??? ????? ??????</h3>
-    
-    <label id="lbl-amount">Amount Spent (?????):</label><br>
-    <input type="number" id="txt-amount" placeholder="e.g. 250"><br>
-
-    <label id="lbl-mode">Payment Mode (?????? ?? ?????):</label><br>
-    <select id="ddl-mode">
-      <option value="CASH">Cash (???)</option>
-      <option value="UPI">Online / UPI</option>
-    </select><br>
-
-    <label id="lbl-proof-type">Proof Upload (???? ????? ????):</label><br>
-    
-    <!-- Hidden Camera Input (capture="environment" opens direct phone camera) -->
-    <input type="file" id="file-camera" accept="image/*" capture="environment" style="display:none" onchange="previewImage(this, 'LIVE_CAMERA')">
-    
-    <!-- Hidden Screenshot Input (opens gallery for UPI screenshots) -->
-    <input type="file" id="file-screenshot" accept="image/*" style="display:none" onchange="previewImage(this, 'UPI_SCREENSHOT')">
-
-    <div style="margin-top: 10px;">
-      <button class="btn-glass" onclick="document.getElementById('file-camera').click()">?? Live Camera (?????)</button>
-      <button class="btn-glass" onclick="document.getElementById('file-screenshot').click()">??? Upload Screenshot</button>
-    </div>
-
-    <!-- Image Preview -->
-    <img id="preview-img" alt="Proof Preview">
-    <div id="file-info" style="margin-top: 5px; font-size: 0.9rem; color: #00E676;"></div>
-
-    <br>
-    <button class="btn-glass" style="width: 100%; background: rgba(0, 230, 118, 0.4);" onclick="submitExpense()">?? Submit Expense / ????? ?????</button>
-  </div>
-
   <script>
-    let selectedProofType = "";
-    let base64Image = "";
+    async function fetchDashboard() {
+      try {
+        const res = await fetch("https://ox-pzdd.onrender.com/api/boss/dashboard");
+        const data = await res.json();
+        
+        document.getElementById('workers-list').innerHTML = data.workers.map(w => 
+          `<p><b>${w.name}:</b> Cash-in-Hand: ₹${w.cash_in_hand.toFixed(2)}</p>`
+        ).join('');
 
-    function previewImage(input, proofType) {
-      if (input.files && input.files[0]) {
-        selectedProofType = proofType;
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          base64Image = e.target.result;
-          const img = document.getElementById('preview-img');
-          img.src = base64Image;
-          img.style.display = 'block';
-          document.getElementById('file-info').innerText = `? Proof Selected: ${proofType}`;
-        };
-        reader.readAsDataURL(input.files[0]);
+        document.getElementById('expenses-list').innerHTML = data.expenses.map(e => `
+          <tr>
+            <td>${e.worker_name}</td>
+            <td>₹${e.amount}</td>
+            <td>${e.payment_mode} (${e.proof_type})</td>
+            <td><a href="${e.image_url}" target="_blank"><img src="${e.image_url}" /></a></td>
+            <td>${e.timestamp}</td>
+          </tr>
+        `).join('');
+      } catch(err) {
+        console.error(err);
       }
     }
-
-    async function submitExpense() {
-      const amount = document.getElementById('txt-amount').value;
-      const payment_mode = document.getElementById('ddl-mode').value;
-
-      if (!amount) return alert("Please enter amount!");
-      if (!base64Image) return alert("Please attach photo/screenshot proof!");
-
-      const res = await fetch("https://ox-pzdd.onrender.com/api/worker/add-expense", {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          worker_id: 1, // Ramesh
-          amount,
-          payment_mode,
-          proof_type: selectedProofType,
-          image_url: base64Image
-        })
-      });
-
-      const data = await res.json();
-      alert("Expense Submitted Successfully!");
-      document.getElementById('lbl-cash').innerText = `? ${data.remaining_cash.toFixed(2)}`;
-      document.getElementById('txt-amount').value = "";
-      document.getElementById('preview-img').style.display = 'none';
-      document.getElementById('file-info').innerText = "";
-    }
-
-    const translations = {
-      hi: {
-        balanceTitle: "??? ??? ??? ??? ???:",
-        addExpense: "+ ??? ????? ?? ???? ??????",
-        amountLabel: "????? ?? ??? (?):",
-        proofType: "???? ?? ?????? ?????:"
-      },
-      en: {
-        balanceTitle: "Current Cash-in-Hand:",
-        addExpense: "+ Add New Expense Proof",
-        amountLabel: "Amount Spent (?):",
-        proofType: "Select Proof Type:"
-      }
-    };
-
-    function setLanguage(lang) {
-      document.getElementById('lbl-balance-title').innerText = translations[lang].balanceTitle;
-      document.getElementById('lbl-add-expense').innerText = translations[lang].addExpense;
-      document.getElementById('lbl-amount').innerText = translations[lang].amountLabel;
-      document.getElementById('lbl-proof-type').innerText = translations[lang].proofType;
-    }
+    fetchDashboard();
+    setInterval(fetchDashboard, 5000);
   </script>
 </body>
 </html>
