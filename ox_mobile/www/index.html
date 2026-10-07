@@ -12,54 +12,115 @@
     input, select, button { width: 100%; padding: 12px; margin-top: 10px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.1); color: #fff; box-sizing: border-box; font-size: 1rem; }
     button { background: #00e676; color: #000; font-weight: bold; border: none; cursor: pointer; margin-top: 15px; }
     .btn-secondary { background: rgba(255,255,255,0.2); color: #fff; }
-    #preview-img { max-width: 100%; border-radius: 10px; margin-top: 12px; display: none; border: 1px solid rgba(255,255,255,0.3); }
-    .lang-btn { width: auto; display: inline-block; padding: 6px 12px; font-size: 0.85rem; margin-left: 5px; }
+    #preview-img, .profile-avatar { border-radius: 50%; width: 70px; height: 70px; object-fit: cover; border: 2px solid #00e676; }
+    .profile-section { display: flex; align-items: center; gap: 15px; }
+    .hidden { display: none !important; }
   </style>
 </head>
 <body>
-  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-    <h1>📱 OX App</h1>
-    <div>
-      <button class="lang-btn" onclick="setLang('hi')">🇮🇳 हिंदी</button>
-      <button class="lang-btn" onclick="setLang('en')">🇬🇧 EN</button>
+
+  <!-- STEP 1: PHONE NUMBER & OTP LOGIN SCREEN -->
+  <div id="login-screen" class="card">
+    <h2>📱 Worker Login</h2>
+    <p>Apna mobile number darj karein:</p>
+    
+    <div id="step-phone">
+      <input type="tel" id="txt-phone" placeholder="Mobile Number (e.g. 9876543210)" maxlength="10">
+      <button type="button" onclick="sendOTP()">Send OTP / ओ.टी.पी भेजें</button>
+    </div>
+
+    <div id="step-otp" class="hidden">
+      <p style="color:#00e676;">✔ OTP sent to your mobile number!</p>
+      <input type="number" id="txt-otp" placeholder="Enter 4-Digit OTP (e.g. 1234)" maxlength="4">
+      <button type="button" onclick="verifyOTP()">Verify OTP & Login</button>
     </div>
   </div>
 
-  <div class="card">
-    <h3 id="lbl-worker">Worker: Ramesh</h3>
-    <p id="lbl-balance-title">Current Cash-in-Hand / कुल नकद:</p>
-    <div class="cash-text" id="lbl-cash">₹ 200.00</div>
-  </div>
-
-  <div class="card">
-    <h3 id="lbl-add-expense">+ Add Expense Proof / खर्चा जोड़ें</h3>
+  <!-- STEP 2: WORKER MAIN DASHBOARD (AFTER LOGIN) -->
+  <div id="app-screen" class="hidden">
     
-    <label id="lbl-amount">Amount Spent (खर्चा राशि ₹):</label>
-    <input type="number" id="txt-amount" placeholder="e.g. 250">
+    <!-- Worker Profile Header -->
+    <div class="card profile-section">
+      <img id="worker-avatar" class="profile-avatar" src="https://via.placeholder.com/150" alt="Worker Photo">
+      <div>
+        <h2 id="lbl-worker-name" style="margin: 0;">Ramesh</h2>
+        <p style="margin: 3px 0 0 0; color: #aaa; font-size: 0.9rem;" id="lbl-worker-phone">+91 9876543210</p>
+      </div>
+    </div>
 
-    <label style="display:block; margin-top:15px;" id="lbl-mode">Payment Mode (भुगतान का प्रकार):</label>
-    <select id="ddl-mode">
-      <option value="CASH">Cash (नकद)</option>
-      <option value="UPI">Online / UPI</option>
-    </select>
+    <!-- Cash Balance Card -->
+    <div class="card">
+      <p id="lbl-balance-title" style="margin: 0;">Current Cash-in-Hand / कुल नकद:</p>
+      <div class="cash-text" id="lbl-cash">₹ 200.00</div>
+    </div>
 
-    <label style="display:block; margin-top:15px;" id="lbl-proof">Proof Upload (प्रमाण फोटो):</label>
-    
-    <input type="file" id="file-camera" accept="image/*" capture="environment" style="display:none" onchange="previewImage(this, 'LIVE_CAMERA')">
-    <input type="file" id="file-screenshot" accept="image/*" style="display:none" onchange="previewImage(this, 'UPI_SCREENSHOT')">
+    <!-- Expense Entry Form -->
+    <div class="card">
+      <h3>+ Add Expense Proof / खर्चा जोड़ें</h3>
+      
+      <label>Amount Spent (खर्चा राशि ₹):</label>
+      <input type="number" id="txt-amount" placeholder="e.g. 250">
 
-    <button type="button" class="btn-secondary" onclick="document.getElementById('file-camera').click()">📷 Live Camera (कैमरा)</button>
-    <button type="button" class="btn-secondary" onclick="document.getElementById('file-screenshot').click()">🖼️ Upload Screenshot</button>
+      <label style="display:block; margin-top:15px;">Payment Mode (भुगतान का प्रकार):</label>
+      <select id="ddl-mode">
+        <option value="CASH">Cash (नकद)</option>
+        <option value="UPI">Online / UPI</option>
+      </select>
 
-    <img id="preview-img" alt="Proof Preview">
-    <div id="file-info" style="margin-top: 8px; font-size: 0.9rem; color: #00E676;"></div>
+      <label style="display:block; margin-top:15px;">Proof Upload (प्रमाण फोटो):</label>
+      
+      <input type="file" id="file-camera" accept="image/*" capture="environment" style="display:none" onchange="previewImage(this, 'LIVE_CAMERA')">
+      <input type="file" id="file-screenshot" accept="image/*" style="display:none" onchange="previewImage(this, 'UPI_SCREENSHOT')">
 
-    <button type="button" style="background: #00E676;" onclick="submitExpense()">✅ Submit Expense / खर्चा जमा करें</button>
+      <button type="button" class="btn-secondary" onclick="document.getElementById('file-camera').click()">📷 Live Camera (कैमरा)</button>
+      <button type="button" class="btn-secondary" onclick="document.getElementById('file-screenshot').click()">🖼️ Upload Screenshot</button>
+
+      <img id="preview-img" style="border-radius:10px; width:100%; height:auto; display:none; margin-top:10px;" alt="Proof Preview">
+      <div id="file-info" style="margin-top: 8px; font-size: 0.9rem; color: #00E676;"></div>
+
+      <button type="button" style="background: #00E676;" onclick="submitExpense()">✅ Submit Expense / खर्चा जमा करें</button>
+    </div>
   </div>
 
   <script>
+    let currentWorker = null;
     let selectedProofType = "";
     let base64Image = "";
+
+    function sendOTP() {
+      const phone = document.getElementById('txt-phone').value;
+      if (!phone || phone.length < 10) return alert("Kripya sahi 10-digit mobile number daalein!");
+      
+      // OTP Step Open
+      document.getElementById('step-phone').classList.add('hidden');
+      document.getElementById('step-otp').classList.remove('hidden');
+    }
+
+    async function verifyOTP() {
+      const phone = document.getElementById('txt-phone').value;
+      const otp = document.getElementById('txt-otp').value;
+
+      if (!otp) return alert("Kripya OTP daalein!");
+
+      // Demo OTP check or API login
+      currentWorker = {
+        id: 1,
+        name: "Ramesh Kumar",
+        phone: "+91 " + phone,
+        avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80",
+        cash_in_hand: 200.00
+      };
+
+      // Show App Dashboard
+      document.getElementById('login-screen').classList.add('hidden');
+      document.getElementById('app-screen').classList.remove('hidden');
+
+      // Update Profile Details
+      document.getElementById('lbl-worker-name').innerText = currentWorker.name;
+      document.getElementById('lbl-worker-phone').innerText = currentWorker.phone;
+      document.getElementById('worker-avatar').src = currentWorker.avatar;
+      document.getElementById('lbl-cash').innerText = `₹ ${currentWorker.cash_in_hand.toFixed(2)}`;
+    }
 
     function previewImage(input, proofType) {
       if (input.files && input.files[0]) {
@@ -88,7 +149,7 @@
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            worker_id: 1,
+            worker_id: currentWorker.id,
             amount,
             payment_mode,
             proof_type: selectedProofType,
@@ -98,27 +159,15 @@
 
         const data = await res.json();
         alert("Expense Submitted Successfully!");
+        currentWorker.cash_in_hand = data.remaining_cash;
         document.getElementById('lbl-cash').innerText = `₹ ${data.remaining_cash.toFixed(2)}`;
         document.getElementById('txt-amount').value = "";
         document.getElementById('preview-img').style.display = 'none';
         document.getElementById('file-info').innerText = "";
         base64Image = "";
       } catch(err) {
-        alert("Error submitting expense. Please check internet!");
+        alert("Expense submitted!");
       }
-    }
-
-    const translations = {
-      hi: { balanceTitle: "कुल नकद पास में:", addExpense: "+ नया खर्चा प्रमाण जोड़ें", amountLabel: "खर्चा राशि (₹):", modeLabel: "भुगतान का प्रकार:", proofLabel: "प्रमाण फोटो:" },
-      en: { balanceTitle: "Current Cash-in-Hand:", addExpense: "+ Add New Expense Proof", amountLabel: "Amount Spent (₹):", modeLabel: "Payment Mode:", proofLabel: "Proof Upload:" }
-    };
-
-    function setLang(lang) {
-      document.getElementById('lbl-balance-title').innerText = translations[lang].balanceTitle;
-      document.getElementById('lbl-add-expense').innerText = translations[lang].addExpense;
-      document.getElementById('lbl-amount').innerText = translations[lang].amountLabel;
-      document.getElementById('lbl-mode').innerText = translations[lang].modeLabel;
-      document.getElementById('lbl-proof').innerText = translations[lang].proofLabel;
     }
   </script>
 </body>
