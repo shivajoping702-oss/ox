@@ -40,3 +40,5 @@ body {
 .btn-glass:hover {
   background: rgba(0, 230, 118, 0.4);
 }
+
+* { font-family: system-ui, -apple-system, sans-serif !important; }

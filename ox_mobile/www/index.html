@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="hi">
 <head>
   <meta charset="UTF-8">
@@ -22,49 +22,51 @@
       display: none;
       border: 1px solid rgba(255,255,255,0.3);
     }
+    body, select, input, button {
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif !important;
+    }
   </style>
 </head>
 <body>
-
   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-    <h1>? OX App</h1>
+    <h1>📱 OX App</h1>
     <div>
-      <button class="btn-glass" onclick="setLanguage('hi')">???? ?????</button>
-      <button class="btn-glass" onclick="setLanguage('en')">???? English</button>
+      <button class="btn-glass" onclick="setLanguage('hi')">🇮🇳 हिंदी</button>
+      <button class="btn-glass" onclick="setLanguage('en')">🇬🇧 English</button>
     </div>
   </div>
 
   <!-- Wallet Balance -->
   <div class="ox-glass-card">
-    <h3 id="lbl-worker-name">Worker: Ramesh ??</h3>
-    <p id="lbl-balance-title" style="margin-bottom: 5px;">Current Cash-in-Hand / ??? ??? ??? ???:</p>
-    <div class="cash-emerald" id="lbl-cash">? 200.00</div>
+    <h3 id="lbl-worker-name">Worker: Ramesh</h3>
+    <p id="lbl-balance-title" style="margin-bottom: 5px;">Current Cash-in-Hand / कुल नकद पास में:</p>
+    <div class="cash-emerald" id="lbl-cash">₹ 200.00</div>
   </div>
 
   <!-- Expense Entry Form with Live Camera & File Upload -->
   <div class="ox-glass-card">
-    <h3 id="lbl-add-expense">+ Add Expense Proof / ??? ????? ??????</h3>
-    
-    <label id="lbl-amount">Amount Spent (?????):</label><br>
+    <h3 id="lbl-add-expense">+ Add Expense Proof / नया खर्चा जोड़ें</h3>
+        
+    <label id="lbl-amount">Amount Spent (खर्चा राशि):</label><br>
     <input type="number" id="txt-amount" placeholder="e.g. 250"><br>
 
-    <label id="lbl-mode">Payment Mode (?????? ?? ?????):</label><br>
+    <label id="lbl-mode">Payment Mode (भुगतान का प्रकार):</label><br>
     <select id="ddl-mode">
-      <option value="CASH">Cash (???)</option>
+      <option value="CASH">Cash (नकद)</option>
       <option value="UPI">Online / UPI</option>
     </select><br>
 
-    <label id="lbl-proof-type">Proof Upload (???? ????? ????):</label><br>
-    
-    <!-- Hidden Camera Input (capture="environment" opens direct phone camera) -->
+    <label id="lbl-proof-type">Proof Upload (प्रमाण अपलोड करें):</label><br>
+        
+    <!-- Hidden Camera Input -->
     <input type="file" id="file-camera" accept="image/*" capture="environment" style="display:none" onchange="previewImage(this, 'LIVE_CAMERA')">
-    
-    <!-- Hidden Screenshot Input (opens gallery for UPI screenshots) -->
+        
+    <!-- Hidden Screenshot Input -->
     <input type="file" id="file-screenshot" accept="image/*" style="display:none" onchange="previewImage(this, 'UPI_SCREENSHOT')">
 
     <div style="margin-top: 10px;">
-      <button class="btn-glass" onclick="document.getElementById('file-camera').click()">?? Live Camera (?????)</button>
-      <button class="btn-glass" onclick="document.getElementById('file-screenshot').click()">??? Upload Screenshot</button>
+      <button class="btn-glass" onclick="document.getElementById('file-camera').click()">📷 Live Camera (कैमरा)</button>
+      <button class="btn-glass" onclick="document.getElementById('file-screenshot').click()">🖼️ Upload Screenshot</button>
     </div>
 
     <!-- Image Preview -->
@@ -72,7 +74,7 @@
     <div id="file-info" style="margin-top: 5px; font-size: 0.9rem; color: #00E676;"></div>
 
     <br>
-    <button class="btn-glass" style="width: 100%; background: rgba(0, 230, 118, 0.4);" onclick="submitExpense()">?? Submit Expense / ????? ?????</button>
+    <button class="btn-glass" style="width: 100%; background: rgba(0, 230, 118, 0.4);" onclick="submitExpense()">✅ Submit Expense / खर्चा जमा करें</button>
   </div>
 
   <script>
@@ -88,7 +90,7 @@
           const img = document.getElementById('preview-img');
           img.src = base64Image;
           img.style.display = 'block';
-          document.getElementById('file-info').innerText = `? Proof Selected: ${proofType}`;
+          document.getElementById('file-info').innerText = `✔ Proof Selected: ${proofType}`;
         };
         reader.readAsDataURL(input.files[0]);
       }
@@ -115,7 +117,7 @@
 
       const data = await res.json();
       alert("Expense Submitted Successfully!");
-      document.getElementById('lbl-cash').innerText = `? ${data.remaining_cash.toFixed(2)}`;
+      document.getElementById('lbl-cash').innerText = `₹ ${data.remaining_cash.toFixed(2)}`;
       document.getElementById('txt-amount').value = "";
       document.getElementById('preview-img').style.display = 'none';
       document.getElementById('file-info').innerText = "";
@@ -123,15 +125,15 @@
 
     const translations = {
       hi: {
-        balanceTitle: "??? ??? ??? ??? ???:",
-        addExpense: "+ ??? ????? ?? ???? ??????",
-        amountLabel: "????? ?? ??? (?):",
-        proofType: "???? ?? ?????? ?????:"
+        balanceTitle: "कुल नकद पास में:",
+        addExpense: "+ नया खर्चा प्रमाण जोड़ें",
+        amountLabel: "खर्चा राशि (₹):",
+        proofType: "प्रमाण का प्रकार चुनें:"
       },
       en: {
         balanceTitle: "Current Cash-in-Hand:",
         addExpense: "+ Add New Expense Proof",
-        amountLabel: "Amount Spent (?):",
+        amountLabel: "Amount Spent (₹):",
         proofType: "Select Proof Type:"
       }
     };
